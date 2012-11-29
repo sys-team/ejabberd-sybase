@@ -381,29 +381,18 @@ GO
 CREATE  CLUSTERED  INDEX [IX_rosterusers_user] ON [dbo].[rosterusers]([username]) WITH  FILLFACTOR = 90 
 GO
 
-ALTER TABLE [dbo].[last] --WITH NOCHECK 
-ADD
-	CONSTRAINT [DF_last_updated] DEFAULT (getdate()) FOR [Modify_Date]
+ALTER TABLE [dbo].[last] modify [Modify_Date] DEFAULT timestamp
 GO
 
-ALTER TABLE [dbo].[spool] --WITH NOCHECK 
-ADD
-	CONSTRAINT [DF_spool_notifyprocessed] DEFAULT (0) FOR [notifyprocessed],
-	CONSTRAINT [DF_spool_created] DEFAULT (getdate()) FOR [created],
-	CONSTRAINT [DF_spool_MustDelete] DEFAULT (0) FOR [MustDelete]
+ALTER TABLE [dbo].[spool] modify [notifyprocessed] default 0;
+ALTER TABLE [dbo].[spool] modify [created] default timestamp;
+ALTER TABLE [dbo].[spool] modify [MustDelete] default 0;
 GO
 
-ALTER TABLE [dbo].[users] --WITH NOCHECK 
-ADD
-	CONSTRAINT [DF_users_created] DEFAULT (getdate()) FOR [created]
+ALTER TABLE [dbo].[users] modify [created] default timestamp
 GO
 
-ALTER TABLE [dbo].[privacy_default_list] --WITH NOCHECK 
-ADD
-	CONSTRAINT [PK_privacy_defaut_list] PRIMARY KEY  CLUSTERED
-	(
-		[username]
-	) --WITH  FILLFACTOR = 90  
+ALTER TABLE [dbo].[privacy_default_list] add primary key([username]) 
 GO
 
  CREATE  INDEX [IX_rostergroups_jid] ON [dbo].[rostergroups]([jid]) WITH  FILLFACTOR = 90 
@@ -859,7 +848,7 @@ BEGIN
   WHILE (@myRowCount) > 0
     BEGIN
       BEGIN TRANSACTION
-        SELECT @dt = DATEADD(d, -3, GETDATE())
+        SELECT @dt = DATEADD(dd, -3, GETDATE())
         DELETE FROM spool
         --WITH (ROWLOCK)
         WHERE (MustDelete=1) OR (Created < @dt)
@@ -954,25 +943,17 @@ GO
 CREATE PROCEDURE [dbo].[get_and_del_spool_msg]
   @Username varchar(250)
 AS
-DECLARE
-  @vSpool table( username varchar(1),
-                 xml      varchar(1))
 BEGIN
-  IF EXISTS (SELECT username FROM spool with (nolock) WHERE spool.username=@Username)
-    BEGIN
-      SELECT [spool].[username] AS username,
-             [spool].[xml] AS xml
-      FROM spool WITH (NOLOCK)
-      WHERE spool.username=@Username
 
-      DELETE spool
-      --WITH (ROWLOCK)
-      WHERE spool.username=@Username
-    END
-  ELSE
-    BEGIN
-      SELECT * FROM @vSpool
-    END
+    SELECT [spool].[username] AS username,
+           [spool].[xml] AS [xml]
+    FROM spool WITH (NOLOCK)
+    WHERE spool.username=@Username
+
+    DELETE spool
+    --WITH (ROWLOCK)
+    WHERE spool.username=@Username
+
 END
 GO
 
@@ -990,35 +971,20 @@ GO
 CREATE PROCEDURE [dbo].[get_roster]
   @Username varchar(250)
 AS
-DECLARE
-  @vRosterusers table( username      varchar(1),
-                       jid           varchar(1),
-                       nick          varchar(1),
-                       subscription  varchar(1),
-                       ask           varchar(1),
-                       askmessage    varchar(1),
-                       server        varchar(1),
-                       subscribe     varchar(1),
-                       type          varchar(1))
 BEGIN
-  IF EXISTS (SELECT username FROM rosterusers with (nolock) WHERE rosterusers.username = @Username)
-    BEGIN
-      SELECT  rosterusers.username AS username,
-              rosterusers.jid AS jid,
-              rosterusers.nick AS nick,
-              rosterusers.subscription AS subscription,
-              rosterusers.ask AS ask,
-              rosterusers.askmessage AS askmessage,
-              rosterusers.server AS server,
-              rosterusers.subscribe AS subscribe,
-              rosterusers.type AS type
-      FROM rosterusers WITH (NOLOCK)
-      WHERE rosterusers.username = @Username
-    END
-  ELSE
-    BEGIN
-      SELECT * FROM @vRosterusers
-    END
+
+    SELECT  rosterusers.username AS username,
+            rosterusers.jid AS jid,
+            rosterusers.nick AS nick,
+            rosterusers.subscription AS subscription,
+            rosterusers.ask AS ask,
+            rosterusers.askmessage AS askmessage,
+            rosterusers.server AS server,
+            rosterusers.subscribe AS subscribe,
+            rosterusers.type AS type
+    FROM rosterusers WITH (NOLOCK)
+    WHERE rosterusers.username = @Username
+
 END
 GO
 
@@ -1026,56 +992,34 @@ CREATE PROCEDURE [dbo].[get_roster_by_jid]
   @Username varchar(200),
   @JID      varchar(250)
 AS
-DECLARE
-  @vRosterusers table( username      varchar(1),
-                       jid           varchar(1),
-                       nick          varchar(1),
-                       subscription  varchar(1),
-                       ask           varchar(1),
-                       askmessage    varchar(1),
-                       server        varchar(1),
-                       subscribe     varchar(1),
-                       type          varchar(1))
+
 BEGIN
-  IF EXISTS (SELECT username FROM rosterusers with (nolock) WHERE (rosterusers.username = @Username) AND (rosterusers.jid = @JID))
-    BEGIN
-      SELECT rosterusers.username AS username,
-             rosterusers.jid AS jid,
-             rosterusers.nick AS nick,
-             rosterusers.subscription AS subscription,
-             rosterusers.ask AS ask,
-             rosterusers.askmessage AS askmessage,
-             rosterusers.server AS server,
-             rosterusers.subscribe AS subscribe,
-             rosterusers.type AS type
-      FROM rosterusers WITH (NOLOCK)
-      WHERE (rosterusers.username = @Username) AND (rosterusers.jid = @JID)
-    END
-  ELSE
-    BEGIN
-      SELECT * FROM @vRosterusers
-    END
+
+    SELECT rosterusers.username AS username,
+           rosterusers.jid AS jid,
+           rosterusers.nick AS nick,
+           rosterusers.subscription AS subscription,
+           rosterusers.ask AS ask,
+           rosterusers.askmessage AS askmessage,
+           rosterusers.server AS server,
+           rosterusers.subscribe AS subscribe,
+           rosterusers.type AS type
+    FROM rosterusers WITH (NOLOCK)
+    WHERE (rosterusers.username = @Username) AND (rosterusers.jid = @JID)
+
 END
 GO
 
 CREATE PROCEDURE [dbo].[get_roster_jid_groups]
   @Username varchar(200)
 AS
-DECLARE
-  @vrostergroups table( jid  varchar(1),
-                        grp  varchar(1))
 BEGIN
-  IF EXISTS (SELECT username FROM rostergroups with (nolock) WHERE rostergroups.username = @Username)
-    BEGIN
-      SELECT rostergroups.jid AS jid,
-             rostergroups.grp AS grp
-      FROM rostergroups WITH (NOLOCK)
-      WHERE rostergroups.username = @Username
-    END
-  ELSE
-    BEGIN
-      SELECT * FROM @vrostergroups
-    END
+
+    SELECT rostergroups.jid AS jid,
+           rostergroups.grp AS grp
+    FROM rostergroups WITH (NOLOCK)
+    WHERE rostergroups.username = @Username
+
 END
 GO
 
@@ -1083,19 +1027,12 @@ CREATE PROCEDURE [dbo].[get_roster_groups]
   @Username varchar(200),
   @JID      varchar(250)
 AS
-DECLARE
-  @vrostergroups table( grp  varchar(1))
 BEGIN
-  IF EXISTS (SELECT username FROM rostergroups with (nolock) WHERE rostergroups.username = @Username)
-    BEGIN
-      SELECT rostergroups.grp AS grp
-      FROM rostergroups WITH (NOLOCK)
-      WHERE (rostergroups.username = @Username)  AND (rostergroups.jid = @JID)
-    END
-  ELSE
-    BEGIN
-      SELECT * FROM @vrostergroups
-    END
+
+    SELECT rostergroups.grp AS grp
+    FROM rostergroups WITH (NOLOCK)
+    WHERE (rostergroups.username = @Username)  AND (rostergroups.jid = @JID)
+
 END
 GO
 
@@ -1103,19 +1040,12 @@ CREATE PROCEDURE [dbo].[get_rostergroup_by_jid]
   @Username varchar(250),
   @JID      varchar(250)
 AS
-DECLARE
-  @vrostergroups table(grp varchar(1))
 BEGIN
-  IF EXISTS (SELECT username FROM rostergroups with (nolock) WHERE rostergroups.username=@Username AND rostergroups.jid=@JID)
-    BEGIN
-      SELECT rostergroups.grp AS grp
-      FROM rostergroups WITH (NOLOCK)
-      WHERE rostergroups.username=@Username AND rostergroups.jid=@JID
-    END
-  ELSE
-    BEGIN
-      SELECT * FROM @vrostergroups
-    END
+
+    SELECT rostergroups.grp AS grp
+    FROM rostergroups WITH (NOLOCK)
+    WHERE rostergroups.username=@Username AND rostergroups.jid=@JID
+
 END
 GO
 
@@ -1123,19 +1053,12 @@ CREATE PROCEDURE [dbo].[get_subscription]
   @Username varchar(250),
   @JID      varchar(250)
 AS
-DECLARE
-  @vrosterusers table( subscription varchar(1))
 BEGIN
-  IF EXISTS (SELECT username FROM rosterusers with (nolock) WHERE rosterusers.username=@Username AND rosterusers.jid=@JID)
-    BEGIN
-      SELECT rosterusers.subscription AS subscription
-      FROM rosterusers WITH (NOLOCK)
-      WHERE rosterusers.username=@Username AND rosterusers.jid=@JID
-    END
-  ELSE
-    BEGIN
-      SELECT * FROM @vrosterusers
-    END
+
+    SELECT rosterusers.subscription AS subscription
+    FROM rosterusers WITH (NOLOCK)
+    WHERE rosterusers.username=@Username AND rosterusers.jid=@JID
+
 END
 GO
 
