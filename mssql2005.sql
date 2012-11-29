@@ -1,376 +1,313 @@
-/*
- * ejabberd, Copyright (C) 2002-2012   ProcessOne
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA
- *
- */
 
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-exec sp_dboption N'ejabberd', N'autoclose', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'bulkcopy', N'true'
-GO
-
-exec sp_dboption N'ejabberd', N'trunc. log', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'torn page detection', N'true'
-GO
-
-exec sp_dboption N'ejabberd', N'read only', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'dbo use', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'single', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'autoshrink', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'ANSI null default', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'recursive triggers', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'ANSI nulls', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'concat null yields null', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'cursor close on commit', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'default to local cursor', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'quoted identifier', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'ANSI warnings', N'false'
-GO
-
-exec sp_dboption N'ejabberd', N'auto create statistics', N'true'
-GO
-
-exec sp_dboption N'ejabberd', N'auto update statistics', N'true'
-GO
-
 use [ejabberd]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[last]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.last'))
 drop table [dbo].[last]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[rostergroups]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.rostergroups'))
 drop table [dbo].[rostergroups]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[rosterusers]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.rosterusers'))
 drop table [dbo].[rosterusers]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[spool]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.spool'))
 drop table [dbo].[spool]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[users]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.users'))
 drop table [dbo].[users]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[vcard]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.vcard'))
 drop table [dbo].[vcard]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[vcard_search]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.vcard_search'))
 drop table [dbo].[vcard_search]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[private_storage]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.private_storage'))
 drop table [dbo].[private_storage]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[privacy_default_list]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.privacy_default_list'))
 drop table [dbo].[privacy_default_list]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[privacy_list]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.privacy_list'))
 drop table [dbo].[privacy_list]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[privacy_list_data]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.privacy_list_data'))
 drop table [dbo].[privacy_list_data]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[roster_version]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.roster_version'))
 drop table [dbo].[roster_version]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[pubsub_node_option]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.pubsub_node_option'))
 drop table [dbo].[pubsub_node_option]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[pubsub_node_owner]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.pubsub_node_owner'))
 drop table [dbo].[pubsub_node_owner]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[pubsub_state]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.pubsub_state'))
 drop table [dbo].[pubsub_state]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[pubsub_item]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.pubsub_item'))
 drop table [dbo].[pubsub_item]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[pubsub_subscription_opt]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.pubsub_subscription_opt'))
 drop table [dbo].[pubsub_subscription_opt]
 GO
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[pubsub_node]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+if exists (select * from dbo.sysobjects where id = object_id(N'dbo.pubsub_node'))
 drop table [dbo].[pubsub_node]
 GO
 
 CREATE TABLE [dbo].[last] (
-	[username] [varchar] (250) NOT NULL ,
-	[seconds] [varchar] (50) NOT NULL ,
-	[state] [varchar] (100) NOT NULL ,
-	[Modify_Date] [datetime] NOT NULL
-) ON [PRIMARY]
+	[username] varchar (250) NOT NULL ,
+	[seconds] varchar (50) NOT NULL ,
+	[state] varchar (100) NOT NULL ,
+	[Modify_Date] datetime NOT NULL
+) 
 GO
 
 CREATE TABLE [dbo].[rostergroups] (
-	[username] [varchar] (250) NOT NULL ,
-	[jid] [varchar] (250) NOT NULL ,
-	[grp] [varchar] (100) NOT NULL
-) ON [PRIMARY]
+	[username] varchar (250) NOT NULL ,
+	[jid] varchar (250) NOT NULL ,
+	[grp] varchar (100) NOT NULL
+) 
 GO
 
 CREATE TABLE [dbo].[rosterusers] (
-	[username] [varchar] (250) NOT NULL ,
-	[jid] [varchar] (250) NOT NULL ,
-	[nick] [varchar] (50) NOT NULL ,
-	[subscription] [char] (1) NOT NULL ,
-	[ask] [char] (1) NOT NULL ,
-	[askmessage] [varchar] (250) NOT NULL ,
-	[server] [char] (1) NOT NULL ,
-	[subscribe] [varchar] (200) NULL ,
-	[type] [varchar] (50) NULL ,
+	[username] varchar (250) NOT NULL ,
+	[jid] varchar (250) NOT NULL ,
+	[nick] varchar (50) NOT NULL ,
+	[subscription] char (1) NOT NULL ,
+	[ask] char (1) NOT NULL ,
+	[askmessage] varchar (250) NOT NULL ,
+	[server] char (1) NOT NULL ,
+	[subscribe] varchar (200) NULL ,
+	[type] varchar (50) NULL ,
 CONSTRAINT [PK_rosterusers] PRIMARY KEY NONCLUSTERED
 (
 	[username] ASC,
 	[jid] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
+) --WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) 
+) 
 GO
 
 CREATE TABLE [dbo].[spool] (
-	[id] [numeric](19, 0) IDENTITY (1, 1) NOT NULL ,
-	[username] [varchar] (250) NOT NULL ,
-	[xml] [text] NOT NULL ,
-	[notifyprocessed] [bit] NULL ,
-	[created] [datetime] NULL ,
-	[MustDelete] [bit] NOT NULL
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+	--[id] numeric(19, 0) IDENTITY (1, 1) NOT NULL ,
+	[id] numeric(19, 0) NOT NULL ,
+	[username] varchar (250) NOT NULL ,
+	[xml] text NOT NULL ,
+	[notifyprocessed] bit NULL ,
+	[created] datetime NULL ,
+	[MustDelete] bit NOT NULL
+)  --TEXTIMAGE_
 GO
 
 CREATE TABLE [dbo].[users] (
-	[username] [varchar] (250) NOT NULL ,
-	[password] [varchar] (50) NOT NULL ,
-	[created] [datetime] NULL
-) ON [PRIMARY]
+	[username] varchar (250) NOT NULL ,
+	[password] varchar (50) NOT NULL ,
+	[created] datetime NULL
+) 
 GO
 
 CREATE TABLE [dbo].[vcard] (
-	[username] [varchar] (250) NOT NULL ,
-	[vcard] [text] NOT NULL
-) ON [PRIMARY]
+	[username] varchar (250) NOT NULL ,
+	[vcard] text NOT NULL
+) 
 GO
 
 CREATE TABLE [dbo].[vcard_search] (
-	[username] [varchar] (250) NOT NULL ,
-	[lusername] [varchar] (250) NOT NULL ,
-	[fn] [text] NOT NULL ,
-	[lfn] [varchar] (250) NOT NULL ,
-	[family] [text] NOT NULL ,
-	[lfamily] [varchar] (250) NOT NULL ,
-	[given] [text] NOT NULL ,
-	[lgiven] [varchar] (250) NOT NULL ,
-	[middle] [text] NOT NULL ,
-	[lmiddle] [varchar] (250) NOT NULL ,
-	[nickname] [text] NOT NULL ,
-	[lnickname] [varchar] (250) NOT NULL ,
-	[bday] [text] NOT NULL ,
-	[lbday] [varchar] (250) NOT NULL ,
-	[ctry] [text] NOT NULL ,
-	[lctry] [varchar] (250) NOT NULL ,
-	[locality] [text] NOT NULL ,
-	[llocality] [varchar] (250) NOT NULL ,
-	[email] [text] NOT NULL ,
-	[lemail] [varchar] (250) NOT NULL ,
-	[orgname] [text] NOT NULL ,
-	[lorgname] [varchar] (250) NOT NULL ,
-	[orgunit] [text] NOT NULL ,
-	[lorgunit] [varchar] (250) NOT NULL
-) ON [PRIMARY]
+	[username] varchar (250) NOT NULL ,
+	[lusername] varchar (250) NOT NULL ,
+	[fn] text NOT NULL ,
+	[lfn] varchar (250) NOT NULL ,
+	[family] text NOT NULL ,
+	[lfamily] varchar (250) NOT NULL ,
+	[given] text NOT NULL ,
+	[lgiven] varchar (250) NOT NULL ,
+	[middle] text NOT NULL ,
+	[lmiddle] varchar (250) NOT NULL ,
+	[nickname] text NOT NULL ,
+	[lnickname] varchar (250) NOT NULL ,
+	[bday] text NOT NULL ,
+	[lbday] varchar (250) NOT NULL ,
+	[ctry] text NOT NULL ,
+	[lctry] varchar (250) NOT NULL ,
+	[locality] text NOT NULL ,
+	[llocality] varchar (250) NOT NULL ,
+	[email] text NOT NULL ,
+	[lemail] varchar (250) NOT NULL ,
+	[orgname] text NOT NULL ,
+	[lorgname] varchar (250) NOT NULL ,
+	[orgunit] text NOT NULL ,
+	[lorgunit] varchar (250) NOT NULL
+) 
 GO
 
 CREATE TABLE [dbo].[private_storage] (
-    [username] [varchar] (250) NOT NULL ,
-    [namespace] [varchar] (250) NOT NULL ,
-    [data] [text] NOT NULL
-) ON [PRIMARY]
+    [username] varchar (250) NOT NULL ,
+    [namespace] varchar (250) NOT NULL ,
+    [data] text NOT NULL
+) 
 GO
 
 CREATE TABLE [dbo].[privacy_default_list] (
-    [username] [varchar] (250) NOT NULL,
-    [name] [varchar] (250) NOT NULL
-) ON [PRIMARY]
+    [username] varchar (250) NOT NULL,
+    [name] varchar (250) NOT NULL
+) 
 GO
 
 CREATE TABLE [dbo].[privacy_list](
-	[username] [varchar](250) NOT NULL,
-	[name] [varchar](250) NOT NULL,
-	[id] [bigint] IDENTITY(1,1) NOT NULL,
+	[username] varchar(250) NOT NULL,
+	[name] varchar(250) NOT NULL,
+	--[id] bigint IDENTITY(1,1) NOT NULL,
+	[id] bigint NOT NULL,
  CONSTRAINT [PK_privacy_list] PRIMARY KEY CLUSTERED
 (
 	[id] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
+) --WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) 
+) 
 GO
 
 CREATE TABLE [dbo].[privacy_list_data] (
-    [id] [bigint] NOT NULL,
-    [t] [character] (1) NOT NULL,
-    [value] [text] NOT NULL,
-    [action] [character] (1) NOT NULL,
-    [ord] [NUMERIC] NOT NULL,
-    [match_all] [bit] NOT NULL,
-    [match_iq] [bit] NOT NULL,
-    [match_message] [bit] NOT NULL,
-    [match_presence_in] [bit] NOT NULL,
-    [match_presence_out] [bit] NOT NULL
-) ON [PRIMARY]
+    [id] bigint NOT NULL,
+    [t] character (1) NOT NULL,
+    [value] text NOT NULL,
+    [action] character (1) NOT NULL,
+    [ord] numeric NOT NULL,
+    [match_all] bit NOT NULL,
+    [match_iq] bit NOT NULL,
+    [match_message] bit NOT NULL,
+    [match_presence_in] bit NOT NULL,
+    [match_presence_out] bit NOT NULL
+) 
 GO
 
 CREATE TABLE [dbo].[roster_version] (
-    [username] [varchar](250) PRIMARY KEY,
-    [version] [text] NOT NULL
-) ON [PRIMARY]
+    [username] varchar(250) PRIMARY KEY,
+    [version] text NOT NULL
+) 
 GO
 
 CREATE TABLE [dbo].[pubsub_node] (
-    [host] [varchar](250),
-    [node] [varchar](250),
-    [parent] [varchar](250),
-    [type] [varchar](250),
-    [nodeid] [bigint] IDENTITY(1,1) PRIMARY KEY
-) ON [PRIMARY]
+    [host] varchar(250),
+    [node] varchar(250),
+    [parent] varchar(250),
+    [type] varchar(250),
+    --[nodeid] bigint IDENTITY(1,1) PRIMARY KEY
+    [nodeid] bigint PRIMARY KEY
+) 
 GO
 
 CREATE TABLE [dbo].[pubsub_node_option] (
-    [nodeid] [bigint],
-    [name] [varchar](250),
-    [val] [varchar](250)
-) ON [PRIMARY]
+    [nodeid] bigint,
+    [name] varchar(250),
+    [val] varchar(250)
+) 
 GO
 
 CREATE TABLE [dbo].[pubsub_node_owner] (
-    [nodeid] [bigint],
-    [owner] [varchar](250)
-) ON [PRIMARY]
+    [nodeid] bigint,
+    [owner] varchar(250)
+) 
 GO
 
 CREATE TABLE [dbo].[pubsub_state] (
-    [nodeid] [bigint],
-    [jid] [varchar](250),
-    [affiliation] [CHAR](1),
-    [subscriptions] [text],
-    [stateid] [bigint] IDENTITY(1,1) PRIMARY KEY
-) ON [PRIMARY]
+    [nodeid] bigint,
+    [jid] varchar(250),
+    [affiliation] char(1),
+    [subscriptions] text,
+    --[stateid] bigint IDENTITY(1,1) PRIMARY KEY
+    [stateid] bigint PRIMARY KEY
+) 
 GO
 
 CREATE TABLE [dbo].[pubsub_item] (
-    [nodeid] [bigint],
-    [itemid] [varchar](250),
-    [publisher] [text],
-    [creation] [text],
-    [modification] [text],
-    [payload] [text]
-) ON [PRIMARY]
+    [nodeid] bigint,
+    [itemid] varchar(250),
+    [publisher] text,
+    [creation] text,
+    [modification] text,
+    [payload] text
+) 
 GO
 
 CREATE TABLE [dbo].[pubsub_subscription_opt] (
-    [subid] [varchar](250),
-    [opt_name] [varchar](32),
-    [opt_value] [text]
-) ON [PRIMARY]
+    [subid] varchar(250),
+    [opt_name] varchar(32),
+    [opt_value] text
+) 
 GO
 
 /* Constraints to add:
 - id in privacy_list is a SERIAL autogenerated number
 - id in privacy_list_data must exist in the table privacy_list */
 
-ALTER TABLE [dbo].[last] WITH NOCHECK ADD
+ALTER TABLE [dbo].[last] --WITH NOCHECK 
+ADD
 	CONSTRAINT [PK_last] PRIMARY KEY  CLUSTERED
 	(
 		[username]
-	) WITH  FILLFACTOR = 90  ON [PRIMARY]
+	) --WITH  FILLFACTOR = 90  
 GO
 
-ALTER TABLE [dbo].[rostergroups] WITH NOCHECK ADD
+ALTER TABLE [dbo].[rostergroups] --WITH NOCHECK 
+ADD
 	CONSTRAINT [PK_rostergroups] PRIMARY KEY  CLUSTERED
 	(
 		[username],
 		[jid],
 		[grp]
-	) WITH  FILLFACTOR = 90  ON [PRIMARY]
+	) --WITH  FILLFACTOR = 90  
 GO
 
-ALTER TABLE [dbo].[spool] WITH NOCHECK ADD
+ALTER TABLE [dbo].[spool] --WITH NOCHECK 
+ADD
 	CONSTRAINT [PK_spool] PRIMARY KEY  CLUSTERED
 	(
 		[username],
 		[id]
-	) WITH  FILLFACTOR = 90  ON [PRIMARY]
+	) --WITH  FILLFACTOR = 90  
 GO
 
-ALTER TABLE [dbo].[users] WITH NOCHECK ADD
+ALTER TABLE [dbo].[users] --WITH NOCHECK 
+ADD
 	CONSTRAINT [PK_users] PRIMARY KEY  CLUSTERED
 	(
 		[username]
-	) WITH  FILLFACTOR = 90  ON [PRIMARY]
+	) --WITH  FILLFACTOR = 90  
 GO
 
-ALTER TABLE [dbo].[vcard] WITH NOCHECK ADD
+ALTER TABLE [dbo].[vcard] --WITH NOCHECK 
+ADD
 	CONSTRAINT [PK_vcard] PRIMARY KEY  CLUSTERED
 	(
 		[username]
-	) WITH  FILLFACTOR = 90  ON [PRIMARY]
+	) --WITH  FILLFACTOR = 90  
 GO
 
-ALTER TABLE [dbo].[pubsub_node_option] WITH NOCHECK ADD 
+ALTER TABLE [dbo].[pubsub_node_option] --WITH NOCHECK 
+ADD 
 	CONSTRAINT [FK_pubsub_node_option] FOREIGN KEY 
 	(
 		[nodeid]
@@ -381,7 +318,8 @@ ALTER TABLE [dbo].[pubsub_node_option] WITH NOCHECK ADD
 ON DELETE CASCADE
 GO
 
-ALTER TABLE [dbo].[pubsub_node_owner] WITH NOCHECK ADD 
+ALTER TABLE [dbo].[pubsub_node_owner] --WITH NOCHECK 
+ADD 
     CONSTRAINT [FK_pubsub_node_owner] FOREIGN KEY 
     (
 		[nodeid]
@@ -392,7 +330,8 @@ ALTER TABLE [dbo].[pubsub_node_owner] WITH NOCHECK ADD
 ON DELETE CASCADE
 GO
 
-ALTER TABLE [dbo].[pubsub_state] WITH NOCHECK ADD 
+ALTER TABLE [dbo].[pubsub_state] --WITH NOCHECK 
+ADD 
     CONSTRAINT [FK_pubsub_state] FOREIGN KEY 
     (
 		[nodeid]
@@ -403,7 +342,8 @@ ALTER TABLE [dbo].[pubsub_state] WITH NOCHECK ADD
 ON DELETE CASCADE
 GO
 
-ALTER TABLE [dbo].[pubsub_item] WITH NOCHECK ADD 
+ALTER TABLE [dbo].[pubsub_item] --WITH NOCHECK 
+ADD 
     CONSTRAINT [FK_pubsub_item] FOREIGN KEY 
     (
 		[nodeid]
@@ -414,250 +354,239 @@ ALTER TABLE [dbo].[pubsub_item] WITH NOCHECK ADD
 ON DELETE CASCADE
 GO
 
-CREATE  INDEX [IX_vcard_search_lfn]       ON [dbo].[vcard_search]([lfn]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+CREATE  INDEX [IX_vcard_search_lfn]       ON [dbo].[vcard_search]([lfn]) WITH  FILLFACTOR = 90 
 GO
-CREATE  INDEX [IX_vcard_search_lfamily]   ON [dbo].[vcard_search]([lfamily]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+CREATE  INDEX [IX_vcard_search_lfamily]   ON [dbo].[vcard_search]([lfamily]) WITH  FILLFACTOR = 90 
 GO
-CREATE  INDEX [IX_vcard_search_lgiven]    ON [dbo].[vcard_search]([lgiven]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+CREATE  INDEX [IX_vcard_search_lgiven]    ON [dbo].[vcard_search]([lgiven]) WITH  FILLFACTOR = 90 
 GO
-CREATE  INDEX [IX_vcard_search_lmiddle]   ON [dbo].[vcard_search]([lmiddle]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+CREATE  INDEX [IX_vcard_search_lmiddle]   ON [dbo].[vcard_search]([lmiddle]) WITH  FILLFACTOR = 90 
 GO
-CREATE  INDEX [IX_vcard_search_lnickname] ON [dbo].[vcard_search]([lnickname]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+CREATE  INDEX [IX_vcard_search_lnickname] ON [dbo].[vcard_search]([lnickname]) WITH  FILLFACTOR = 90 
 GO
-CREATE  INDEX [IX_vcard_search_lbday]     ON [dbo].[vcard_search]([lbday]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+CREATE  INDEX [IX_vcard_search_lbday]     ON [dbo].[vcard_search]([lbday]) WITH  FILLFACTOR = 90 
 GO
-CREATE  INDEX [IX_vcard_search_lctry]     ON [dbo].[vcard_search]([lctry]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+CREATE  INDEX [IX_vcard_search_lctry]     ON [dbo].[vcard_search]([lctry]) WITH  FILLFACTOR = 90 
 GO
-CREATE  INDEX [IX_vcard_search_llocality] ON [dbo].[vcard_search]([llocality]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+CREATE  INDEX [IX_vcard_search_llocality] ON [dbo].[vcard_search]([llocality]) WITH  FILLFACTOR = 90 
 GO
-CREATE  INDEX [IX_vcard_search_lemail]    ON [dbo].[vcard_search]([lemail]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+CREATE  INDEX [IX_vcard_search_lemail]    ON [dbo].[vcard_search]([lemail]) WITH  FILLFACTOR = 90 
 GO
-CREATE  INDEX [IX_vcard_search_lorgname]  ON [dbo].[vcard_search]([lorgname]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+CREATE  INDEX [IX_vcard_search_lorgname]  ON [dbo].[vcard_search]([lorgname]) WITH  FILLFACTOR = 90 
 GO
-CREATE  INDEX [IX_vcard_search_lorgunit]  ON [dbo].[vcard_search]([lorgunit]) WITH  FILLFACTOR = 90 ON [PRIMARY]
-GO
-
-
-CREATE  CLUSTERED  INDEX [IX_rosterusers_user] ON [dbo].[rosterusers]([username]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+CREATE  INDEX [IX_vcard_search_lorgunit]  ON [dbo].[vcard_search]([lorgunit]) WITH  FILLFACTOR = 90 
 GO
 
-ALTER TABLE [dbo].[last] WITH NOCHECK ADD
+
+CREATE  CLUSTERED  INDEX [IX_rosterusers_user] ON [dbo].[rosterusers]([username]) WITH  FILLFACTOR = 90 
+GO
+
+ALTER TABLE [dbo].[last] --WITH NOCHECK 
+ADD
 	CONSTRAINT [DF_last_updated] DEFAULT (getdate()) FOR [Modify_Date]
 GO
 
-ALTER TABLE [dbo].[spool] WITH NOCHECK ADD
+ALTER TABLE [dbo].[spool] --WITH NOCHECK 
+ADD
 	CONSTRAINT [DF_spool_notifyprocessed] DEFAULT (0) FOR [notifyprocessed],
 	CONSTRAINT [DF_spool_created] DEFAULT (getdate()) FOR [created],
 	CONSTRAINT [DF_spool_MustDelete] DEFAULT (0) FOR [MustDelete]
 GO
 
-ALTER TABLE [dbo].[users] WITH NOCHECK ADD
+ALTER TABLE [dbo].[users] --WITH NOCHECK 
+ADD
 	CONSTRAINT [DF_users_created] DEFAULT (getdate()) FOR [created]
 GO
 
-ALTER TABLE [dbo].[privacy_default_list] WITH NOCHECK ADD
+ALTER TABLE [dbo].[privacy_default_list] --WITH NOCHECK 
+ADD
 	CONSTRAINT [PK_privacy_defaut_list] PRIMARY KEY  CLUSTERED
 	(
 		[username]
-	) WITH  FILLFACTOR = 90  ON [PRIMARY]
+	) --WITH  FILLFACTOR = 90  
 GO
 
- CREATE  INDEX [IX_rostergroups_jid] ON [dbo].[rostergroups]([jid]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE  INDEX [IX_rostergroups_jid] ON [dbo].[rostergroups]([jid]) WITH  FILLFACTOR = 90 
 GO
 
- CREATE  INDEX [IX_rostergroups_user] ON [dbo].[rostergroups]([username]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE  INDEX [IX_rostergroups_user] ON [dbo].[rostergroups]([username]) WITH  FILLFACTOR = 90 
 GO
 
- CREATE  INDEX [IX_spool_user] ON [dbo].[spool]([username]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE  INDEX [IX_spool_user] ON [dbo].[spool]([username]) WITH  FILLFACTOR = 90 
 GO
 
- CREATE  INDEX [IX_spool_process] ON [dbo].[spool]([created], [notifyprocessed]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE  INDEX [IX_spool_process] ON [dbo].[spool]([created], [notifyprocessed]) WITH  FILLFACTOR = 90 
 GO
 
- CREATE  INDEX [IK_Spool_Del] ON [dbo].[spool]([MustDelete]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE  INDEX [IK_Spool_Del] ON [dbo].[spool]([MustDelete]) WITH  FILLFACTOR = 90 
 GO
 
- CREATE  INDEX [IK_Spool_Created] ON [dbo].[spool]([created]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE  INDEX [IK_Spool_Created] ON [dbo].[spool]([created]) WITH  FILLFACTOR = 90 
 GO
 
- CREATE  INDEX [IX_private_user] ON [dbo].[private_storage]([username]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE  INDEX [IX_private_user] ON [dbo].[private_storage]([username]) WITH  FILLFACTOR = 90 
 GO
 
- CREATE  INDEX [IX_private_user_ns] ON [dbo].[private_storage]([username], [namespace]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE  INDEX [IX_private_user_ns] ON [dbo].[private_storage]([username], [namespace]) WITH  FILLFACTOR = 90 
 GO
 
- CREATE INDEX [IX_privacy_list_username] ON [dbo].[privacy_list]([username]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE INDEX [IX_privacy_list_username] ON [dbo].[privacy_list]([username]) WITH  FILLFACTOR = 90 
 GO
 
- CREATE INDEX [IX_privacy_list_username_name] ON [dbo].[privacy_list]([username], [name]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE INDEX [IX_privacy_list_username_name] ON [dbo].[privacy_list]([username], [name]) WITH  FILLFACTOR = 90 
 GO
 
- CREATE INDEX [IX_pubsub_node_parent]        ON [dbo].[pubsub_node]([parent]) WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE INDEX [IX_pubsub_node_parent]        ON [dbo].[pubsub_node]([parent]) WITH  FILLFACTOR = 90 
 GO
 
- CREATE INDEX [IX_pubsub_node_tuple]         ON [dbo].[pubsub_node]([host], [node])  WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE INDEX [IX_pubsub_node_tuple]         ON [dbo].[pubsub_node]([host], [node])  WITH  FILLFACTOR = 90 
 GO
 
- CREATE INDEX [IX_pubsub_node_option_nodeid] ON [dbo].[pubsub_node_option]([nodeid])  WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE INDEX [IX_pubsub_node_option_nodeid] ON [dbo].[pubsub_node_option]([nodeid])  WITH  FILLFACTOR = 90 
 GO
 
- CREATE INDEX [IX_pubsub_node_owner_nodeid]  ON [dbo].[pubsub_node_owner]([nodeid])  WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE INDEX [IX_pubsub_node_owner_nodeid]  ON [dbo].[pubsub_node_owner]([nodeid])  WITH  FILLFACTOR = 90 
 GO
 
- CREATE INDEX [IX_pubsub_state_jid]          ON [dbo].[pubsub_state]([jid])  WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE INDEX [IX_pubsub_state_jid]          ON [dbo].[pubsub_state]([jid])  WITH  FILLFACTOR = 90 
 GO
 
- CREATE INDEX [IX_pubsub_state_tuple]        ON [dbo].[pubsub_state]([nodeid], [jid])  WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE INDEX [IX_pubsub_state_tuple]        ON [dbo].[pubsub_state]([nodeid], [jid])  WITH  FILLFACTOR = 90 
 GO
 
- CREATE INDEX [IX_pubsub_item_itemid]        ON [dbo].[pubsub_item]([itemid])  WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE INDEX [IX_pubsub_item_itemid]        ON [dbo].[pubsub_item]([itemid])  WITH  FILLFACTOR = 90 
 GO
 
- CREATE INDEX [IX_pubsub_item_tuple]         ON [dbo].[pubsub_item]([nodeid], [itemid])  WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE INDEX [IX_pubsub_item_tuple]         ON [dbo].[pubsub_item]([nodeid], [itemid])  WITH  FILLFACTOR = 90 
 GO
 
- CREATE INDEX [IX_pubsub_subscription_opt]   ON [dbo].[pubsub_subscription_opt]([subid], [opt_name])  WITH  FILLFACTOR = 90 ON [PRIMARY]
+ CREATE INDEX [IX_pubsub_subscription_opt]   ON [dbo].[pubsub_subscription_opt]([subid], [opt_name])  WITH  FILLFACTOR = 90 
 Go
 
-/*********************************************************/
-/** These store procedures are for use with ejabberd    **/
-/** 1.1 and Microsoft Sql Server 2000                   **/
-/**                                                     **/
-/** The stored procedures reduce the need to sql        **/
-/** compilation of the database and also allow for also **/
-/** provide each of database integration. The stored    **/
-/** procedure have been optimized to increase database  **/
-/** performance and a reduction of 80% in CPU was       **/
-/** achieved over the use of standard sql.              **/
-/*********************************************************/
-
-/****** Object:  StoredProcedure [dbo].[add_roster] ******/
-/** Add or update user entries in the roster            **/
-/*********************************************************/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[add_roster]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.add_roster') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[add_roster]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[add_roster_group]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.add_roster_group') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[add_roster_group]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[add_roster_user]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.add_roster_user') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[add_roster_user]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[del_roster_groups]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.del_roster_groups') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[del_roster_groups]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[add_spool]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.add_spool') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[add_spool]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[add_user]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.add_user') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[add_user]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[set_password]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.set_password') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[set_password]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[clean_spool_msg]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.clean_spool_msg') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[clean_spool_msg]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_password]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_password') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_password]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[del_last]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.del_last') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[del_last]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[del_roster]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.del_roster') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[del_roster]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[del_spool_msg]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.del_spool_msg') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[del_spool_msg]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[del_user]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.del_user') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[del_user]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[del_user_return_password]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.del_user_return_password') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[del_user_return_password]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[del_user_roster]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.del_user_roster') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[del_user_roster]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_and_del_spool_msg]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_and_del_spool_msg') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_and_del_spool_msg]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_last]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_last') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_last]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_roster]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_roster') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_roster]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_roster_by_jid]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_roster_by_jid') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_roster_by_jid]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_roster_jid_groups]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_roster_jid_groups') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_roster_jid_groups]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_roster_groups]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_roster_groups') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_roster_groups]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_rostergroup_by_jid]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_rostergroup_by_jid') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_rostergroup_by_jid]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_subscription]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_subscription') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_subscription]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[list_users]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.list_users') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[list_users]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[set_last]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.set_last') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[set_last]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[set_private_data]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.set_private_data') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[set_private_data]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_private_data]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_private_data') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_private_data]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[del_user_storage]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.del_user_storage') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[del_user_storage]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[set_vcard]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.set_vcard') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[set_vcard]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_vcard]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_vcard') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_vcard]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_default_privacy_list]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_default_privacy_list') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_default_privacy_list]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_privacy_list_names]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_privacy_list_names') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_privacy_list_names]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_privacy_list_id]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_privacy_list_id') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_privacy_list_id]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_privacy_list_data]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_privacy_list_data') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_privacy_list_data]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[get_privacy_list_data_by_id]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_privacy_list_data_by_id') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[get_privacy_list_data_by_id]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[set_default_privacy_list]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.set_default_privacy_list') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[set_default_privacy_list]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[unset_default_privacy_list]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.unset_default_privacy_list') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[unset_default_privacy_list]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[remove_privacy_list]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.remove_privacy_list') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[remove_privacy_list]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[add_privacy_list]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.add_privacy_list') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[add_privacy_list]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[set_privacy_list]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.set_privacy_list') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[set_privacy_list]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[del_privacy_list_by_id]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.del_privacy_list_by_id') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[del_privacy_list_by_id]
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[del_privacy_lists]') AND type in (N'P', N'PC'))
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.del_privacy_lists') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[del_privacy_lists]
 GO
 
@@ -688,7 +617,7 @@ BEGIN
               rosterusers.server=@Server,
               rosterusers.subscribe=@Subscribe,
               rosterusers.type=@Type
-        WHERE (rosterusers.username=@Username) AND (rosterusers.jid=@JID);
+        WHERE (rosterusers.username=@Username) AND (rosterusers.jid=@JID)
       END
     ELSE
       BEGIN
@@ -713,7 +642,7 @@ BEGIN
             @Server,
             @Subscribe,
             @Type
-          );
+          )
       END
 
    --- Update Roster Groups if exist else add group entry
@@ -728,17 +657,13 @@ BEGIN
          ( @Username,
            @JID,
            @Grp
-         );
+         )
      END
 
   COMMIT
 END
 GO
 
-/***************************************************************/
-/****** Object:  StoredProcedure [dbo].[add_roster_group] ******/
-/** Add or update user group entries in the roster groups     **/
-/***************************************************************/
 CREATE PROCEDURE [dbo].[add_roster_group]
   @Username  varchar(250),
   @JID       varchar(250),
@@ -762,10 +687,6 @@ BEGIN
 END
 GO
 
-/***************************************************************/
-/****** Object:  StoredProcedure [dbo].[add_roster_user]  ******/
-/** Add or update user entries in the roster                  **/
-/***************************************************************/
 CREATE PROCEDURE [dbo].[add_roster_user]
   @Username      varchar(250),
   @JID           varchar(250),
@@ -793,7 +714,7 @@ BEGIN
               rosterusers.server=@Server,
               rosterusers.subscribe=@Subscribe,
               rosterusers.type=@Type
-        WHERE (rosterusers.username=@Username) AND (rosterusers.jid=@JID);
+        WHERE (rosterusers.username=@Username) AND (rosterusers.jid=@JID)
       END
     ELSE
       BEGIN
@@ -818,7 +739,7 @@ BEGIN
             @Server,
             @Subscribe,
             @Type
-          );
+          )
       END
 
     --- Update Roster Group if exist of add new group
@@ -829,33 +750,25 @@ BEGIN
 END
 GO
 
-/***************************************************************/
-/****** Object:  StoredProcedure [dbo].[del_roster_groups] ******/
-/** Remove user group entries from the roster groups table    **/
-/***************************************************************/
 CREATE PROCEDURE [dbo].[del_roster_groups]
   @Username  varchar(250),
   @JID       varchar(250)
 AS
 BEGIN
       DELETE FROM rostergroups
-      WITH (ROWLOCK)
-      WHERE (rostergroups.username = @Username) AND (rostergroups.jid = @JID);
+      --WITH (ROWLOCK)
+      WHERE (rostergroups.username = @Username) AND (rostergroups.jid = @JID)
 END
 GO
 
-/***************************************************************/
-/****** Object:  StoredProcedure [dbo].[add_spool]        ******/
-/** Add a entry to the spool table                            **/
-/***************************************************************/
 CREATE PROCEDURE [dbo].[add_spool]
   @Username varchar(250),
   @XML varchar(8000)
 AS
 BEGIN
   INSERT INTO spool
-    ( spool.username,
-      spool.xml
+    ( [spool].[username],
+      [spool].[xml]
     )
   VALUES
     ( @Username,
@@ -864,10 +777,7 @@ BEGIN
 END
 GO
 
-/***************************************************************/
-/****** Object:  StoredProcedure [dbo].[add_user]         ******/
-/** Add or update user entries to jabber                      **/
-/***************************************************************/
+
 CREATE PROCEDURE [dbo].[add_user]
   @Username varchar(200),
   @Password varchar(50)
@@ -880,14 +790,10 @@ BEGIN
   VALUES
     ( @Username,
       @Password
-    );
+    )
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[set_password]            **/
-/** Update users password                                        **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[set_password]
   @Username varchar(200),
   @Password varchar(50)
@@ -895,33 +801,25 @@ AS
 BEGIN
   IF EXISTS (SELECT username FROM users WITH (NOLOCK) WHERE username=@Username)
     BEGIN
-      UPDATE users SET username=@Username, password=@Password WHERE username=@Username;
+      UPDATE users SET username=@Username, password=@Password WHERE username=@Username
     END
   ELSE
     BEGIN
-      INSERT INTO users (username, password) VALUES (@Username, @Password);
+      INSERT INTO users (username, password) VALUES (@Username, @Password)
     END
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_password]            **/
-/** Retrive the user password                                    **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_password]
   @Username varchar(200)
 AS
 BEGIN
   SELECT users.password as password
   FROM users WITH (NOLOCK)
-  WHERE username=@Username;
+  WHERE username=@Username
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[set_roster_version]      **/
-/** Update users roster_version                                  **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[set_roster_version]
   @Username varchar(200),
   @Version varchar(8000)
@@ -929,33 +827,25 @@ AS
 BEGIN
   IF EXISTS (SELECT username FROM roster_version WITH (NOLOCK) WHERE username=@Username)
     BEGIN
-      UPDATE roster_version SET username=@Username, version=@Version WHERE username=@Username;
+      UPDATE roster_version SET username=@Username, version=@Version WHERE username=@Username
     END
   ELSE
     BEGIN
-      INSERT INTO roster_version (username, version) VALUES (@Username, @Version);
+      INSERT INTO roster_version (username, version) VALUES (@Username, @Version)
     END
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_roster_version]      **/
-/** Retrive the user roster_version                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_roster_version]
   @Username varchar(200)
 AS
 BEGIN
   SELECT roster_version.version as version
   FROM roster_version WITH (NOLOCK)
-  WHERE username=@Username;
+  WHERE username=@Username
 END
 GO
 
-/***************************************************************/
-/****** Object:  StoredProcedure [dbo].[clean_spool_msg]  ******/
-/** Delete messages older that 3 days from spool              **/
-/***************************************************************/
 CREATE   PROCEDURE [dbo].[clean_spool_msg]
 AS
 DECLARE
@@ -971,8 +861,8 @@ BEGIN
       BEGIN TRANSACTION
         SELECT @dt = DATEADD(d, -3, GETDATE())
         DELETE FROM spool
-        WITH (ROWLOCK)
-        WHERE (MustDelete=1) OR (Created < @dt);
+        --WITH (ROWLOCK)
+        WHERE (MustDelete=1) OR (Created < @dt)
 
         SET @myRowCount = @@RowCount
       COMMIT
@@ -980,24 +870,16 @@ BEGIN
 END
 GO
 
-/***************************************************************/
-/****** Object:  StoredProcedure [dbo].[del_last]         ******/
-/** Delete an entry from the last table                       **/
-/***************************************************************/
 CREATE PROCEDURE [dbo].[del_last]
   @Username  varchar(250)
 AS
 BEGIN
   DELETE FROM [last]
-  WITH (ROWLOCK)
-  WHERE [last].username=@Username;
+  --WITH (ROWLOCK)
+  WHERE [last].username=@Username
 END
 GO
 
-/***************************************************************/
-/****** Object:  StoredProcedure [dbo].[del_roster]       ******/
-/** Delete an entry from the roster                           **/
-/***************************************************************/
 CREATE PROCEDURE [dbo].[del_roster]
   @Username varchar(250),
   @JID      varchar(250)
@@ -1005,49 +887,37 @@ AS
 BEGIN
   BEGIN TRANSACTION
     DELETE FROM rosterusers
-    WITH (ROWLOCK)
-    WHERE (rosterusers.username = @Username) AND (rosterusers.jid = @JID);
+    --WITH (ROWLOCK)
+    WHERE (rosterusers.username = @Username) AND (rosterusers.jid = @JID)
 
     DELETE FROM rostergroups
-    WITH (ROWLOCK)
-    WHERE (rostergroups.username = @Username) AND (rostergroups.jid = @JID);
+    --WITH (ROWLOCK)
+    WHERE (rostergroups.username = @Username) AND (rostergroups.jid = @JID)
   COMMIT
 END
 GO
 
 
-/***************************************************************/
-/****** Object:  StoredProcedure [dbo].[del_spool_msg]    ******/
-/** Delete an entry from the spool table                      **/
-/***************************************************************/
 CREATE PROCEDURE [dbo].[del_spool_msg]
   @Username varchar(250)
 AS
 BEGIN
   DELETE FROM spool
-  WITH (ROWLOCK)
-  WHERE spool.username=@Username;
+  --WITH (ROWLOCK)
+  WHERE spool.username=@Username
 END
 GO
 
-/***************************************************************/
-/****** Object:  StoredProcedure [dbo].[del_user]         ******/
-/** Delete an entry from the user table                       **/
-/***************************************************************/
 CREATE PROCEDURE [dbo].[del_user]
   @Username varchar(200)
 AS
 BEGIN
   DELETE FROM users
-  WITH (ROWLOCK)
-  WHERE username=@Username;
+  --WITH (ROWLOCK)
+  WHERE username=@Username
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[del_user_return_password]**/
-/** Delete an entry from the user table and return user password **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[del_user_return_password]
  @Username varchar(250)
 AS
@@ -1056,39 +926,31 @@ DECLARE
 BEGIN
  EXECUTE @Pwd = dbo.get_password @Username
  DELETE FROM users
- WITH (ROWLOCK)
+ --WITH (ROWLOCK)
  WHERE username=@Username
 
- SELECT @Pwd;
+ SELECT @Pwd
 END
 GO
 
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[del_user_roster]         **/
-/** Delete the users roster                                      **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[del_user_roster]
  @Username varchar(250)
 AS
 BEGIN
   BEGIN TRANSACTION
     DELETE FROM rosterusers
-    WITH (ROWLOCK)
-    WHERE rosterusers.username = @Username;
+    --WITH (ROWLOCK)
+    WHERE rosterusers.username = @Username
 
     DELETE FROM rostergroups
-    WITH (ROWLOCK)
-    WHERE rostergroups.username = @Username;
+    --WITH (ROWLOCK)
+    WHERE rostergroups.username = @Username
   COMMIT
 END
 GO
 
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_and_del_spool_msg]   **/
-/** Fetch and delete the users offline messages                  **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_and_del_spool_msg]
   @Username varchar(250)
 AS
@@ -1098,26 +960,22 @@ DECLARE
 BEGIN
   IF EXISTS (SELECT username FROM spool with (nolock) WHERE spool.username=@Username)
     BEGIN
-      SELECT spool.username AS username,
-             spool.xml AS xml
+      SELECT [spool].[username] AS username,
+             [spool].[xml] AS xml
       FROM spool WITH (NOLOCK)
-      WHERE spool.username=@Username;
+      WHERE spool.username=@Username
 
       DELETE spool
-      WITH (ROWLOCK)
+      --WITH (ROWLOCK)
       WHERE spool.username=@Username
     END
   ELSE
     BEGIN
-      SELECT * FROM @vSpool;
+      SELECT * FROM @vSpool
     END
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_last]                **/
-/** Retrive the last user login                                  **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_last]
   @Username varchar(250)
 AS
@@ -1125,14 +983,10 @@ BEGIN
   SELECT last.seconds AS seconds,
          last.state AS state
   FROM last WITH (NOLOCK)
-  WHERE last.username=@Username;
+  WHERE last.username=@Username
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_roster]              **/
-/** Retrive the user roster                                      **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_roster]
   @Username varchar(250)
 AS
@@ -1159,7 +1013,7 @@ BEGIN
               rosterusers.subscribe AS subscribe,
               rosterusers.type AS type
       FROM rosterusers WITH (NOLOCK)
-      WHERE rosterusers.username = @Username;
+      WHERE rosterusers.username = @Username
     END
   ELSE
     BEGIN
@@ -1168,10 +1022,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_roster_by_jid]       **/
-/** Retrive the user roster via JID                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_roster_by_jid]
   @Username varchar(200),
   @JID      varchar(250)
@@ -1199,7 +1049,7 @@ BEGIN
              rosterusers.subscribe AS subscribe,
              rosterusers.type AS type
       FROM rosterusers WITH (NOLOCK)
-      WHERE (rosterusers.username = @Username) AND (rosterusers.jid = @JID);
+      WHERE (rosterusers.username = @Username) AND (rosterusers.jid = @JID)
     END
   ELSE
     BEGIN
@@ -1208,10 +1058,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_roster_jid_groups]   **/
-/** Retrieve the user roster groups                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_roster_jid_groups]
   @Username varchar(200)
 AS
@@ -1224,7 +1070,7 @@ BEGIN
       SELECT rostergroups.jid AS jid,
              rostergroups.grp AS grp
       FROM rostergroups WITH (NOLOCK)
-      WHERE rostergroups.username = @Username;
+      WHERE rostergroups.username = @Username
     END
   ELSE
     BEGIN
@@ -1233,10 +1079,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_roster_groups]       **/
-/** Retrive the user roster groups                               **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_roster_groups]
   @Username varchar(200),
   @JID      varchar(250)
@@ -1248,7 +1090,7 @@ BEGIN
     BEGIN
       SELECT rostergroups.grp AS grp
       FROM rostergroups WITH (NOLOCK)
-      WHERE (rostergroups.username = @Username)  AND (rostergroups.jid = @JID);
+      WHERE (rostergroups.username = @Username)  AND (rostergroups.jid = @JID)
     END
   ELSE
     BEGIN
@@ -1257,10 +1099,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_rostergroup_by_jid]  **/
-/** Retrive the user roster groups via JID                       **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_rostergroup_by_jid]
   @Username varchar(250),
   @JID      varchar(250)
@@ -1272,7 +1110,7 @@ BEGIN
     BEGIN
       SELECT rostergroups.grp AS grp
       FROM rostergroups WITH (NOLOCK)
-      WHERE rostergroups.username=@Username AND rostergroups.jid=@JID;
+      WHERE rostergroups.username=@Username AND rostergroups.jid=@JID
     END
   ELSE
     BEGIN
@@ -1281,10 +1119,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_subscription]        **/
-/** Retrive the user subscription requests                       **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_subscription]
   @Username varchar(250),
   @JID      varchar(250)
@@ -1296,7 +1130,7 @@ BEGIN
     BEGIN
       SELECT rosterusers.subscription AS subscription
       FROM rosterusers WITH (NOLOCK)
-      WHERE rosterusers.username=@Username AND rosterusers.jid=@JID;
+      WHERE rosterusers.username=@Username AND rosterusers.jid=@JID
     END
   ELSE
     BEGIN
@@ -1305,21 +1139,13 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[list_users]              **/
-/** Retrieve a list of all users                                 **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[list_users]
 AS
 BEGIN
-  SELECT users.username AS username FROM users WITH (NOLOCK);
+  SELECT users.username AS username FROM users WITH (NOLOCK)
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[set_last]                **/
-/** Update users last login status                               **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[set_last]
   @Username  varchar(250),
   @Seconds   varchar(50),
@@ -1332,7 +1158,7 @@ BEGIN
       SET [last].username = @Username,
           [last].seconds = @Seconds,
           [last].state = @State
-      WHERE last.username=@Username;
+      WHERE last.username=@Username
     END
   ELSE
     BEGIN
@@ -1350,10 +1176,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[set_private_data]        **/
-/** store user private data by namespace                         **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[set_private_data]
     @Username  varchar(250),
     @Namespace varchar(250),
@@ -1366,7 +1188,7 @@ BEGIN
         SET [private_storage].username = @Username,
             [private_storage].namespace = @Namespace,
             [private_storage].data = @Data
-            WHERE private_storage.username = @Username AND private_storage.namespace = @Namespace;
+            WHERE private_storage.username = @Username AND private_storage.namespace = @Namespace
     END
   ELSE
     BEGIN
@@ -1384,10 +1206,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_private_data]        **/
-/** Retrieve user private data by namespace                      **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_private_data]
     @Username  varchar(250),
     @Namespace varchar(250)
@@ -1395,29 +1213,20 @@ AS
 BEGIN
   SELECT private_storage.data AS data
   FROM private_storage WITH (NOLOCK)
-  WHERE username=@Username and namespace=@Namespace;
+  WHERE username=@Username and namespace=@Namespace
 END
 GO
 
-/***************************************************************/
-/****** Object:  StoredProcedure [dbo].[del_user_storage] ******/
-/** Delete private storage area for a given user              **/
-/***************************************************************/
 CREATE PROCEDURE [dbo].[del_user_storage]
   @Username  varchar(250)
 AS
 BEGIN
   DELETE FROM [private_storage]
-  WITH (ROWLOCK)
-  WHERE [private_storage].username=@Username;
+  --WITH (ROWLOCK)
+  WHERE [private_storage].username=@Username
 END
 GO
 
-
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[set_vcard]               **/
-/** Set the user's vCard                                         **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[set_vcard]
             @VCard varchar(8000),
             @Username  varchar(250),
@@ -1451,7 +1260,7 @@ BEGIN
         UPDATE [vcard]
         SET [vcard].username = @LUsername,
             [vcard].vcard = @Vcard
-            WHERE vcard.username = @LUsername;
+            WHERE vcard.username = @LUsername
 
         UPDATE [vcard_search]
         SET [vcard_search].username = @Username,
@@ -1478,7 +1287,7 @@ BEGIN
             [vcard_search].lorgname = @Lorgname,
             [vcard_search].orgunit = @Orgunit,
             [vcard_search].lorgunit = @Lorgunit
-            WHERE vcard_search.lusername = @LUsername;
+            WHERE vcard_search.lusername = @LUsername
     END
   ELSE
     BEGIN
@@ -1489,7 +1298,7 @@ BEGIN
         VALUES
             ( @lUsername,
               @Vcard
-            );
+            )
 
         INSERT INTO [vcard_search]
 	(
@@ -1549,24 +1358,16 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_vcard]               **/
-/** Retrive the user's vCard                                     **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_vcard]
   @Username varchar(250)
 AS
 BEGIN
   SELECT vcard.vcard as vcard
   FROM vcard WITH (NOLOCK)
-  WHERE username=@Username;
+  WHERE username=@Username
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_default_privacy_list]**/
-/** Retrive the user's default privacy list                      **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_default_privacy_list]
   @Username varchar(250)
 AS
@@ -1577,10 +1378,6 @@ BEGIN
 END
 GO
   
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_privacy_list_names]  **/
-/** Retrive the user's default privacy list names                **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_privacy_list_names]
   @username varchar(250)
 AS
@@ -1591,10 +1388,6 @@ BEGIN
 END
 GO
       
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_privacy_list_id]     **/
-/**                                                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_privacy_list_id]
   @username varchar(250),
   @SName varchar(250)
@@ -1606,10 +1399,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_privacy_list_data]   **/
-/**                                                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_privacy_list_data]
   @username varchar(250),
   @SName varchar(250)
@@ -1624,7 +1413,7 @@ BEGIN
          l_data.match_message, 
          l_data.match_presence_in, 
          l_data.match_presence_out
-  FROM privacy_list_data l_data (NOLOCK)
+  FROM privacy_list_data l_data WITH (NOLOCK)
   WHERE l_data.id = (SELECT list.id 
 			         FROM privacy_list list
 			         WHERE list.username=@username
@@ -1633,10 +1422,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[get_privacy_list_data_by_id]**/
-/**                                                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[get_privacy_list_data_by_id]
   @Id bigint
 AS
@@ -1650,16 +1435,12 @@ BEGIN
          l_data.match_message, 
          l_data.match_presence_in, 
          l_data.match_presence_out
-  FROM privacy_list_data l_data (NOLOCK)
+  FROM privacy_list_data l_data WITH (NOLOCK)
   WHERE l_data.id=@ID
   ORDER BY l_data.ord
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[set_default_privacy_list]**/
-/**                                                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[set_default_privacy_list]
   @username varchar(250),
   @Sname varchar(250)
@@ -1686,10 +1467,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[unset_default_privacy_list]**/
-/**                                                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[unset_default_privacy_list]
   @username varchar(250)
 AS
@@ -1700,10 +1477,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[remove_privacy_list]     **/
-/**                                                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[remove_privacy_list]
   @username varchar(250),
   @SName varchar(250)
@@ -1716,10 +1489,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[add_privacy_list]        **/
-/**                                                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[add_privacy_list]
   @username varchar(250),
   @SName varchar(250)
@@ -1730,10 +1499,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[set_privacy_list]        **/
-/**                                                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[set_privacy_list]
   @Id bigint,
   @t char(1), 
@@ -1774,10 +1539,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[del_privacy_list_by_id]  **/
-/**                                                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[del_privacy_list_by_id]
   @Id bigint
 AS
@@ -1787,10 +1548,6 @@ BEGIN
 END
 GO
 
-/******************************************************************/
-/****** Object:  StoredProcedure [dbo].[del_privacy_lists]       **/
-/**                                                              **/
-/******************************************************************/
 CREATE PROCEDURE [dbo].[del_privacy_lists]
   @Server varchar(250),
   @username varchar(250)
