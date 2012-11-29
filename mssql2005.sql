@@ -578,6 +578,12 @@ GO
 IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.del_privacy_lists') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[del_privacy_lists]
 GO
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.set_roster_version') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[set_roster_version]
+GO
+IF  EXISTS (SELECT * FROM sysobjects WHERE id = OBJECT_ID(N'dbo.get_roster_version') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[get_roster_version]
+GO
 
 CREATE PROCEDURE [dbo].[add_roster]
   @Username       varchar(250),
